@@ -27,7 +27,7 @@ def strip_stuff_from_domains(x) -> str:
     return y.rstrip('|.-/*')
 
 
-def clean_domain_names():
+def cleanup_domain_names():
     global search_space
 
     return map(strip_stuff_from_domains, search_space['apks'][0]['domainNames'])
@@ -56,7 +56,7 @@ def reduce_to_domain_part(domainlist: List) -> List:
     
 if __name__ == "__main__":
     load_search_space("search_space.json")      #  "./feature_vectors.json")
-    tracker_domains = list(clean_domain_names())
+    tracker_domains = list(cleanup_domain_names())
     print(80*"=" + " tracking domains " + 80*"=")
     print(tracker_domains)
     print("(found %d domain names)" % len(tracker_domains))
