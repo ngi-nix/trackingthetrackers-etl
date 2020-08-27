@@ -30,7 +30,7 @@ def strip_stuff_from_domains(x) -> str:
 def clean_domain_names():
     global search_space
 
-    return map(strip_stuff_from_domains, search_space['features']['domainNames'])
+    return map(strip_stuff_from_domains, search_space['apks'][0]['domainNames'])
 
 
 def load_onemillion(listname: str = '~/.onemillion/alexa.csv') -> Set:
@@ -55,7 +55,7 @@ def reduce_to_domain_part(domainlist: List) -> List:
 
     
 if __name__ == "__main__":
-    load_search_space("./feature_vectors.json")
+    load_search_space("search_space.json")      #  "./feature_vectors.json")
     tracker_domains = list(clean_domain_names())
     print(80*"=" + " tracking domains " + 80*"=")
     print(tracker_domains)
