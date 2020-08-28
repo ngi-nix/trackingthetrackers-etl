@@ -30,7 +30,7 @@ args = parser.parse_args()
 # error_rate defines accuracy; You can use defaults with
 # `BloomFilter()` without any arguments. Following example
 # is same as defaults:
-bloom = BloomFilter(max_elements=100000, error_rate=0.01)
+# bloom = BloomFilter(max_elements=100000, error_rate=0.01)
 
 cache = dict()
 
@@ -101,6 +101,11 @@ def evaluate_dir(basedir: Path) -> pd.DataFrame:
         print("processing %s" %f)
         data=read_json(f)
         print(data)
+        # TODO: turn permissions, metaDataNames, ... to bitmaps
+        # TODO: put all of this into a dataframe as documented in https://gitlab.com/trackingthetrackers/wiki/-/wikis/Pandas-internal-data-format-for-the-ML-part
+        # TODO: verify of these two steps are correct
+        # TODO maybe: plot distribution of nr_clean_domains/nr_tracker_domains etc. for trackers as well as clean. What's the overlap in the distributions?
+        # TODO finally: send the dataframe to the ML part
         #df.loc[i] = { "filename": filename, "sha256": "xxx", "ground truth": "clean", "prediction": 0.1 }
         i+=1
         if i >= int(args.stop_after/2):
