@@ -13,7 +13,11 @@ import trackingthetrackers as ttt
 search_space = None
 
 
-def load_search_space(filename: str):
+known_tracker_domains = dict()
+known_clean_domains = dict()
+
+
+def load_search_space_file(filename: str):
     global search_space
 
     search_space = json.load(open(filename))
@@ -89,9 +93,15 @@ def load_onemillion(listname: str = '~/.onemillion/alexa.csv') -> Set:
 
     # another way, have more control. We are actually not interested in the order here
     df = pd.read_csv(listname, names=["count", "domain"])
-    om_domains = set(df['domain'].tolist())
+    om_domains = df['domain'].tolist()
+    om_domains = set(reduce_to_domain_part(om_domains))
     # print(om_domains)
     return om_domains
+
+
+def normalize_to_basedomain(domain: str) -> str:
+    ext = tldextract.extract(domain)
+    return '.'.join(ext[-2:])
 
 
 def reduce_to_domain_part(domainlist: List) -> List:
@@ -103,10 +113,11 @@ def reduce_to_domain_part(domainlist: List) -> List:
     return l
 
 
-if __name__ == "__main__":
+def load():
 
     # load all data
-    load_search_space("search_space.json")      # "./feature_vectors.json")
+    print("LOADING the SEARCH SPACE")
+    load_search_space_file("search_space.json")      # "./feature_vectors.json")
 
     # get the known tracking domains
     tracker_domains = list(cleanup_domain_names())
@@ -117,7 +128,10 @@ if __name__ == "__main__":
     # normlizing them
     print(40*"=" + " normalized tracker domains " + 40*"=")
     normalized_tracker_domains = set(reduce_to_domain_part(tracker_domains))
+    tracker_domains = normalized_tracker_domains
     print("(found %d normalized domain names)" % len(normalized_tracker_domains))
+    for item in tracker_domains:
+        known_tracker_domains[item] = 1
 
     # load the one million list
     print(40*"=" + " onemillion domains " + 40*"=")
@@ -128,28 +142,32 @@ if __name__ == "__main__":
     print(40*"=" + " good domains (i.e. onemillion - trackers) " + 40*"=")
     good_domains = om_domains.difference(normalized_tracker_domains)
     print("(found %d good names)" % len(good_domains))
+    print("sample head() of good domains: %r" % list(good_domains)[:20])
+    for item in good_domains:
+        known_clean_domains[item] = 1
 
-
-    # broadcastReceivers 
+    # broadcastReceivers
     print(40*"=" + " broadcastRecevier/Intent strings" + 40*"=")
-    bc_receivers =  list(cleanup_broadcastReceivers())
+    bc_receivers = list(cleanup_broadcastReceivers())
     print("head (n=10) bc_receivers: %r" % bc_receivers[:10])
     print("(found %d normalized broadcastReceiver strings)" % len(bc_receivers))
 
-    # dependencies 
+    # dependencies
     print(40*"=" + " dependencies " + 40*"=")
     dependencies = list(cleanup_dependencies())
     print("head (n=10) dependencies: %r" % dependencies[:10])
     print("(found %d normalized dependencies strings)" % len(dependencies))
 
-    #  metaDataNames 
+    #  metaDataNames
     print(40*"=" + " metaDataNames " + 40*"=")
     metaDataNames = list(cleanup_metaDataNames())
     print("head (n=10) metaDataNames: %r" % metaDataNames[:10])
     print("(found %d normalized metaDataNames strings)" % len(metaDataNames))
 
-    # permissions 
+    # permissions
     print(40*"=" + " permissions " + 40*"=")
     permissions = list(cleanup_permissions())
     print("head (n=10) permissions: %r" % permissions[:10])
     print("(found %d normalized permissions strings)" % len(permissions))
+
+    print("DONE")
