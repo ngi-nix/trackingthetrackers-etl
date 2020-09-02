@@ -9,7 +9,7 @@ These scripts take the following inputs:
   * dependency (a.k.a names of the used libraries) (__categorical data__)
 
 It will make bitvectors out of all the (__categorical data__) inputs.
-And will make scalar (numberical) columns for the number of domains.
+And will make scalar (numerical) columns for the number of domains.
 
 ## Output
 
@@ -43,7 +43,7 @@ All of the other categorical data types (permissions, metaDataNames, etc.) will 
 ## Labels
 
 For training data,  the dataframe will include a ``label`` which is 0 or 1 . 0 meaning clean, 1 meaning "contains trackers".
-For infernece (classification), this column will exist but contain ``n/a`` values.
+For inference (classification), this column will exist but contain ``n/a`` values.
 
 # Loading the data
 
